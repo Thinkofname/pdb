@@ -1016,7 +1016,11 @@ impl<'a> FallibleIterator for InlineeLineIterator<'a> {
                     self.file_index = file_index;
                 }
                 BinaryAnnotation::ChangeLineOffset(delta) => {
-                    self.line = (i64::from(self.line) + i64::from(delta)) as u32;
+                    let mut val = i64::from(self.line) + i64::from(delta);
+                    if val <= 0 {
+                        val = 1;
+                    }
+                    self.line = val as u32;
                 }
                 BinaryAnnotation::ChangeLineEndDelta(line_length) => {
                     self.line_length = line_length;
@@ -1038,7 +1042,11 @@ impl<'a> FallibleIterator for InlineeLineIterator<'a> {
                 }
                 BinaryAnnotation::ChangeCodeOffsetAndLineOffset(code_delta, line_delta) => {
                     self.code_offset += code_delta;
-                    self.line = (i64::from(self.line) + i64::from(line_delta)) as u32;
+                    let mut val = i64::from(self.line) + i64::from(line_delta);
+                    if val <= 0 {
+                        val = 1;
+                    }
+                    self.line = val as u32;
                 }
                 BinaryAnnotation::ChangeCodeLengthAndCodeOffset(code_length, code_delta) => {
                     self.code_length = Some(code_length);
